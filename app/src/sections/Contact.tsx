@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useScrollReveal } from '@/hooks/useScrollReveal';
-import { Mail, Send, Linkedin, Github, Twitter } from 'lucide-react';
+import { Mail, Send, Linkedin, Github, Twitter, InstagramIcon } from 'lucide-react';
 import { toast } from 'sonner';
 
 export function Contact() {
@@ -68,7 +68,7 @@ export function Contact() {
               }`}
               style={{ transitionDelay: '0.3s' }}
             >
-              Tell me what you're making. I'll reply within 48 hours.
+              Tell me what you're looking for. I'll reply within 48 hours.
             </p>
 
             {/* Email */}
@@ -81,7 +81,7 @@ export function Contact() {
               data-cursor-hover
             >
               <Mail className="w-5 h-5" />
-              hello@alexchen.dev
+              dushyantvasisht@gmail.com
             </a>
 
             {/* Social Links */}
@@ -91,9 +91,9 @@ export function Contact() {
               }`}
               style={{ transitionDelay: '0.5s' }}
             >
-              <SocialLink href="#" icon={<Github className="w-5 h-5" />} label="GitHub" />
+              <SocialLink href="https://github.com/Dushyant-2004" icon={<Github className="w-5 h-5" />} label="GitHub" />
               <SocialLink href="#" icon={<Linkedin className="w-5 h-5" />} label="LinkedIn" />
-              <SocialLink href="#" icon={<Twitter className="w-5 h-5" />} label="Twitter" />
+              <SocialLink href="#" icon={<InstagramIcon className="w-5 h-5" />} label="Instagram" />
             </div>
           </div>
         </div>
@@ -157,7 +157,7 @@ export function Contact() {
                 required
                 rows={5}
                 className="form-input resize-none"
-                placeholder="Tell me about your project..."
+                placeholder="What Can I Help You With?"
               />
             </div>
 
@@ -186,7 +186,7 @@ export function Contact() {
         <footer className="mt-16 pt-8 border-t border-[rgba(242,245,250,0.08)]">
           <div className="flex flex-col md:flex-row items-center justify-between gap-4">
             <div className="text-[#A7B1C6] text-sm">
-              © 2024 Alex Chen. All rights reserved.
+              Dushyant Vasisht Portfolio . All rights reserved.
             </div>
             <div className="flex items-center gap-6 text-sm text-[#A7B1C6]">
               <a href="#" className="hover:text-white transition-colors" data-cursor-hover>Privacy</a>

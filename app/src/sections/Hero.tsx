@@ -90,7 +90,7 @@ export function Hero() {
               transitionDelay: '0.4s',
             }}
           >
-            Frontend Engineer
+            Fullstack Developer
           </div>
 
           {/* Main Content */}
@@ -104,7 +104,8 @@ export function Hero() {
                 transitionDelay: '0.5s',
               }}
             >
-              Alex Chen
+              Dushyant Vasisht 
+    
             </h1>
             
             <p
@@ -132,7 +133,7 @@ export function Hero() {
               }}
             >
               <MapPin className="w-4 h-4" />
-              <span className="text-sm">Based in Taipei</span>
+              <span className="text-sm">Based in India</span>
             </div>
 
             <button

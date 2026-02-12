@@ -87,19 +87,19 @@ export function About() {
               
               <div className="space-y-6 text-[#A7B1C6] leading-relaxed" style={{ transform: 'translateZ(20px)' }}>
                 <p className="text-lg">
-                  I'm a frontend engineer who cares about clarity, performance, and craft. 
+                  I'm a Software Engineer who cares about clarity, performance, and craft. 
                   I turn complex products into calm, intuitive interfaces—without losing the personality.
                 </p>
                 
                 <p>
                   With over 5 years of experience building web applications, I've honed my skills 
-                  in React, TypeScript, and modern frontend architecture. I believe great software 
+                  in React, TypeScript, Next.js along with Backend technologies and modern web architecture. I believe great software 
                   should feel invisible—getting out of the way so users can accomplish their goals.
                 </p>
 
                 <div className="pt-4 border-t border-[rgba(242,245,250,0.08)]">
                   <p className="text-sm text-[#4F6DFF]">
-                    Currently shipping at a design-led startup. Open to collaborations.
+                    Currently shipping and learning new technologies. Open to collaborations.
                   </p>
                 </div>
               </div>
