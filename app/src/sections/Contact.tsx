@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useScrollReveal } from '@/hooks/useScrollReveal';
-import { Mail, Send, Linkedin, Github, Twitter, InstagramIcon } from 'lucide-react';
+import { Mail, Send, Linkedin, Github, InstagramIcon } from 'lucide-react';
 import { toast } from 'sonner';
 
 export function Contact() {
