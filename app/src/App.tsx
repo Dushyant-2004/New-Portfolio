@@ -1,6 +1,7 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { Toaster } from 'sonner';
 import { Navigation } from '@/components/Navigation';
+import { Preloader } from '@/components/Preloader';
 import { Hero } from '@/sections/Hero';
 import { About } from '@/sections/About';
 import { Projects } from '@/sections/Projects';
@@ -11,8 +12,22 @@ import { Contact } from '@/sections/Contact';
 import { useCustomCursor } from '@/hooks/useCustomCursor';
 
 function App() {
+  const [isLoading, setIsLoading] = useState(true);
+
   // Initialize custom cursor
   useCustomCursor();
+
+  const handlePreloaderComplete = () => {
+    setIsLoading(false);
+    document.body.style.overflow = 'auto';
+  };
+
+  useEffect(() => {
+    // Prevent scroll during preloader
+    if (isLoading) {
+      document.body.style.overflow = 'hidden';
+    }
+  }, [isLoading]);
 
   useEffect(() => {
     // Preload images for smoother experience
@@ -31,9 +46,13 @@ function App() {
   }, []);
 
   return (
-    <div className="relative min-h-screen bg-[#070B14]">
-      {/* Grain Overlay */}
-      <div className="grain-overlay" />
+    <>
+      {/* Preloader */}
+      {isLoading && <Preloader onComplete={handlePreloaderComplete} />}
+
+      <div className="relative min-h-screen bg-[#070B14]">
+        {/* Grain Overlay */}
+        <div className="grain-overlay" />
 
       {/* Toast notifications */}
       <Toaster 
@@ -61,6 +80,7 @@ function App() {
         <Contact />
       </main>
     </div>
+    </>
   );
 }
 
