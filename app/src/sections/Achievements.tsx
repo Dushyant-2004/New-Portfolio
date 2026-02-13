@@ -14,7 +14,7 @@ const achievements: Achievements[] = [
     quote: "Secured 2nd Position in CyberCup 4.0 with our innovative project. The experience was incredible and the competition was fierce. Proud of what we achieved!",
     name: "Amity University, Noida",
     role: "Hackathon Winner 2024",
-    avatar: "/image.png",
+    avatar: "/Cybercup.png",
     position: "2nd Position & Cash Prize of ₹10,000",
   },
      
@@ -22,7 +22,7 @@ const achievements: Achievements[] = [
     quote: "Got 3rd Position in CodeSangam 2023, a prestigious hackathon for innovative solutions. It was an intense battle for problem-solving and innovating new ideas. Grateful for the recognition!",
     name: "SGT University, Gurugram",
     role: "Hackathon Winner 2024",
-    avatar: "/image.png",
+    avatar: "/CodeSangam.png",
     position: "3rd Position & Cash Prize of ₹5,000",
   },
 
@@ -30,7 +30,7 @@ const achievements: Achievements[] = [
     quote: "Participated in Hack The League Chapter 3",
     name: "JECRC University, Jaipur",
     role: "Hackathon Participant 2024",
-    avatar: "/image.png",
+    avatar: "/Hacktheleague.png",
     position: "Earned Participant Certificate with Goodies",
   },
 ];

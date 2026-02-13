@@ -92,8 +92,8 @@ export function Contact() {
               style={{ transitionDelay: '0.5s' }}
             >
               <SocialLink href="https://github.com/Dushyant-2004" icon={<Github className="w-5 h-5" />} label="GitHub" />
-              <SocialLink href="https://www.linkedin.com/in/dushyant-vasisht-123456789/" icon={<Linkedin className="w-5 h-5" />} label="LinkedIn" />
-              <SocialLink href="#" icon={<InstagramIcon className="w-5 h-5" />} label="Instagram" />
+              <SocialLink href="https://www.linkedin.com/in/dushyant-vashisht-908b752a9/" icon={<Linkedin className="w-5 h-5" />} label="LinkedIn" />
+              <SocialLink href="https://www.instagram.com/dushyant_vashisht_/" icon={<InstagramIcon className="w-5 h-5" />} label="Instagram" />
             </div>
           </div>
         </div>
