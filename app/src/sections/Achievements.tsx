@@ -6,23 +6,32 @@ interface Achievements {
   name: string;
   role: string;
   avatar: string;
-  company: string;
+  position: string;
 }
 
 const achievements: Achievements[] = [
   {
-    quote: "Alex ships interfaces that feel alive—smooth, precise, and surprisingly fast. The kind of craft that raises the bar for the whole team.",
-    name: "Mina Park",
-    role: "Product Design Lead",
-    avatar: "/avatar_mina.jpg",
-    company: "Stripe",
+    quote: "Secured 2nd Position in CyberCup 4.0 with our innovative project. The experience was incredible and the competition was fierce. Proud of what we achieved!",
+    name: "Amity University, Noida",
+    role: "Hackathon Winner 2024",
+    avatar: "/image.png",
+    position: "2nd Position & Cash Prize of ₹10,000",
   },
+     
+    {
+    quote: "Got 3rd Position in CodeSangam 2023, a prestigious hackathon for innovative solutions. It was an intense battle for problem-solving and innovating new ideas. Grateful for the recognition!",
+    name: "SGT University, Gurugram",
+    role: "Hackathon Winner 2024",
+    avatar: "/image.png",
+    position: "3rd Position & Cash Prize of ₹5,000",
+  },
+
   {
-    quote: "Working with Alex was a game-changer. Our conversion rate increased by 40% after the redesign. The attention to detail is unmatched.",
-    name: "David Chen",
-    role: "CEO",
-    avatar: "/about_photo.jpg",
-    company: "Nova Labs",
+    quote: "Participated in Hack The League Chapter 3",
+    name: "JECRC University, Jaipur",
+    role: "Hackathon Participant 2024",
+    avatar: "/image.png",
+    position: "Earned Participant Certificate with Goodies",
   },
 ];
 
@@ -104,7 +113,7 @@ export function Achievements() {
                 <div>
                   <div className="font-semibold text-white text-lg">{achievement.name}</div>
                   <div className="text-sm text-[#A7B1C6]">{achievement.role}</div>
-                  <div className="text-xs text-[#4F6DFF] mt-1">{achievement.company}</div>
+                  <div className="text-xs text-[#4F6DFF] mt-1">{achievement.position}</div>
                 </div>
               </div>
             </div>

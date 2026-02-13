@@ -73,7 +73,7 @@ export function Contact() {
 
             {/* Email */}
             <a 
-              href="mailto:hello@alexchen.dev"
+              href="mailto:dushyantvasisht@gmail.com"
               className={`inline-flex items-center gap-3 text-[#4F6DFF] font-medium text-lg hover:underline transition-all duration-700 ${
                 isVisible ? 'opacity-100' : 'opacity-0'
               }`}
@@ -92,7 +92,7 @@ export function Contact() {
               style={{ transitionDelay: '0.5s' }}
             >
               <SocialLink href="https://github.com/Dushyant-2004" icon={<Github className="w-5 h-5" />} label="GitHub" />
-              <SocialLink href="#" icon={<Linkedin className="w-5 h-5" />} label="LinkedIn" />
+              <SocialLink href="https://www.linkedin.com/in/dushyant-vasisht-123456789/" icon={<Linkedin className="w-5 h-5" />} label="LinkedIn" />
               <SocialLink href="#" icon={<InstagramIcon className="w-5 h-5" />} label="Instagram" />
             </div>
           </div>
