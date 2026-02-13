@@ -1,7 +1,7 @@
 import { useScrollReveal } from '@/hooks/useScrollReveal';
 import { Quote } from 'lucide-react';
 
-interface Testimonial {
+interface Achievements {
   quote: string;
   name: string;
   role: string;
@@ -9,7 +9,7 @@ interface Testimonial {
   company: string;
 }
 
-const testimonials: Testimonial[] = [
+const achievements: Achievements[] = [
   {
     quote: "Alex ships interfaces that feel alive—smooth, precise, and surprisingly fast. The kind of craft that raises the bar for the whole team.",
     name: "Mina Park",
@@ -26,13 +26,13 @@ const testimonials: Testimonial[] = [
   },
 ];
 
-export function Testimonials() {
+export function Achievements() {
   const { ref: sectionRef, isVisible } = useScrollReveal<HTMLElement>({ threshold: 0.15 });
 
   return (
     <section 
       ref={sectionRef}
-      id="testimonials" 
+      id="achievements" 
       className="relative w-full min-h-screen py-20 bg-[#070B14] overflow-hidden flex items-center"
     >
       {/* Section Label */}
@@ -41,7 +41,7 @@ export function Testimonials() {
           isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 -translate-y-4'
         }`}
       >
-        Testimonials
+        Achievements
       </div>
 
       <div className="w-full max-w-[1100px] mx-auto px-6 lg:px-12">
@@ -58,9 +58,9 @@ export function Testimonials() {
             transitionDelay: '0.1s',
           }}
         >
-          {testimonials.map((testimonial, index) => (
+          {achievements.map((achievement, index) => (
             <div 
-              key={testimonial.name}
+              key={achievement.name}
               className={`grid lg:grid-cols-[1fr,auto] gap-10 lg:gap-16 items-center ${
                 index > 0 ? 'mt-12 pt-12 border-t border-[rgba(242,245,250,0.08)]' : ''
               }`}
@@ -77,7 +77,7 @@ export function Testimonials() {
               >
                 <Quote className="w-10 h-10 text-[#4F6DFF] mb-6 opacity-50" />
                 <blockquote className="text-[clamp(20px,2.5vw,32px)] font-medium text-white leading-snug">
-                  "{testimonial.quote}"
+                  "{achievement.quote}"
                 </blockquote>
               </div>
 
@@ -96,15 +96,15 @@ export function Testimonials() {
                   data-cursor-hover
                 >
                   <img
-                    src={testimonial.avatar}
-                    alt={testimonial.name}
+                    src={achievement.avatar}
+                    alt={achievement.name}
                     className="w-full h-full object-cover"
                   />
                 </div>
                 <div>
-                  <div className="font-semibold text-white text-lg">{testimonial.name}</div>
-                  <div className="text-sm text-[#A7B1C6]">{testimonial.role}</div>
-                  <div className="text-xs text-[#4F6DFF] mt-1">{testimonial.company}</div>
+                  <div className="font-semibold text-white text-lg">{achievement.name}</div>
+                  <div className="text-sm text-[#A7B1C6]">{achievement.role}</div>
+                  <div className="text-xs text-[#4F6DFF] mt-1">{achievement.company}</div>
                 </div>
               </div>
             </div>

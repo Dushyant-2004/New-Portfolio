@@ -7,7 +7,7 @@ import { About } from '@/sections/About';
 import { Projects } from '@/sections/Projects';
 import { Capabilities } from '@/sections/Capabilities';
 import { Process } from '@/sections/Process';
-import { Testimonials } from '@/sections/Testimonials';
+import { Achievements } from '@/sections/Achievements';
 import { Contact } from '@/sections/Contact';
 import { useCustomCursor } from '@/hooks/useCustomCursor';
 
@@ -76,7 +76,7 @@ function App() {
         <Projects />
         <Capabilities />
         <Process />
-        <Testimonials />
+        <Achievements />
         <Contact />
       </main>
     </div>
