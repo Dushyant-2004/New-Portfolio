@@ -412,7 +412,7 @@ export function Contact() {
         <footer className="mt-16 pt-8 border-t border-[rgba(242,245,250,0.08)]">
           <div className="flex flex-col md:flex-row items-center justify-between gap-4">
             <div className="text-[#A7B1C6] text-sm">
-              © 2024 Dushyant Vashisht. All rights reserved.
+              Dushyant Vashisht. All rights reserved.
             </div>
             <div className="flex items-center gap-6 text-sm text-[#A7B1C6]">
               <a href="#" className="hover:text-white transition-colors">Privacy</a>
