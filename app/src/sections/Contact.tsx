@@ -300,6 +300,13 @@ export function Contact() {
     >
       <div className="w-full max-w-[1100px] mx-auto px-6 lg:px-12">
 
+        {/* Section Label */}
+        <div className="text-center mb-4">
+          <span className="text-sm font-medium text-[#4F6DFF] uppercase tracking-wider">
+            Contact
+          </span>
+        </div>
+
         <div className="glass-card rounded-[28px] p-8 md:p-12 mb-6">
           <div className="text-center max-w-2xl mx-auto">
             <h2 className="text-[clamp(32px,4vw,52px)] font-bold text-white leading-tight mb-4">
@@ -400,6 +407,19 @@ export function Contact() {
 
           </form>
         </div>
+
+        {/* Footer */}
+        <footer className="mt-16 pt-8 border-t border-[rgba(242,245,250,0.08)]">
+          <div className="flex flex-col md:flex-row items-center justify-between gap-4">
+            <div className="text-[#A7B1C6] text-sm">
+              © 2024 Dushyant Vashisht. All rights reserved.
+            </div>
+            <div className="flex items-center gap-6 text-sm text-[#A7B1C6]">
+              <a href="#" className="hover:text-white transition-colors">Privacy</a>
+              <a href="#" className="hover:text-white transition-colors">Terms</a>
+            </div>
+          </div>
+        </footer>
 
       </div>
     </section>

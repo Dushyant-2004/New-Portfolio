@@ -66,8 +66,8 @@ function App() {
         }}
       />
 
-      {/* Navigation */}
-      <Navigation />
+      {/* Navigation - only show after preloader */}
+      {!isLoading && <Navigation />}
 
       {/* Main Content */}
       <main className="relative">

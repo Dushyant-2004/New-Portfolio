@@ -4,6 +4,19 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Shine animation for AnimeNavBar */
+@keyframes shine {
+  0% {
+    transform: translateX(-100%);
+  }
+  50% {
+    transform: translateX(100%);
+  }
+  100% {
+    transform: translateX(-100%);
+  }
+}
+
 @layer base {
   :root {
     --background: 220 43% 4%;
