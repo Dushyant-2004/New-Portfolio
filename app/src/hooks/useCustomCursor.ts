@@ -50,7 +50,8 @@ export function useCustomCursor() {
     };
 
     const handleMouseEnter = (e: Event) => {
-      const target = e.target as HTMLElement;
+      const target = e.target;
+      if (!(target instanceof HTMLElement)) return;
       if (target.matches('a, button, [data-cursor-hover]') || target.closest('a, button, [data-cursor-hover]')) {
         isHoveringRef.current = true;
         cursor.classList.add('hover');
@@ -58,7 +59,8 @@ export function useCustomCursor() {
     };
 
     const handleMouseLeave = (e: Event) => {
-      const target = e.target as HTMLElement;
+      const target = e.target;
+      if (!(target instanceof HTMLElement)) return;
       if (target.matches('a, button, [data-cursor-hover]') || target.closest('a, button, [data-cursor-hover]')) {
         isHoveringRef.current = false;
         cursor.classList.remove('hover');
