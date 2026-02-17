@@ -25,11 +25,11 @@ const projects: Project[] = [
   {
     id: 2,
     title: 'Nova Commerce',
-    description: 'Headless storefront with seamless checkout experience',
+    description: 'Orbit is a futuristic AI-powered 3D commerce platform redefining online shopping with immersive product experiences, intelligent personalization, dynamic pricing, creator marketplaces, and cinematic motion-driven design.',
     category: 'E-commerce',
-    image: '/project_02.jpg',
-    tags: ['Next.js', 'Stripe', 'Tailwind'],
-    link: '#',
+    image: '/Orbit.png',
+    tags: ['Next.js', 'Typescript', 'Tailwind', 'Shadcn', 'Framer Motion', 'GSAP', 'Razorpay'],
+    link: 'https://orbit-mu-eight.vercel.app',
   },
   {
     id: 3,
