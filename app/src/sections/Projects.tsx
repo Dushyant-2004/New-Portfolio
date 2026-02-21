@@ -28,17 +28,17 @@ const projects: Project[] = [
     description: 'Orbit is a futuristic AI-powered 3D commerce platform redefining online shopping with immersive product experiences, intelligent personalization, dynamic pricing, creator marketplaces, and cinematic motion-driven design.',
     category: 'E-commerce',
     image: '/Orbit.png',
-    tags: ['Next.js', 'Typescript', 'Tailwind', 'Shadcn', 'Framer Motion', 'GSAP', 'Razorpay'],
+    tags: ['Next.js', 'Typescript', 'Tailwind', 'Mongodb', 'Shadcn', 'Framer Motion', 'GSAP', 'Razorpay', 'Google OAuth'],
     link: 'https://orbit-mu-eight.vercel.app',
   },
   {
     id: 3,
-    title: 'Orbit Studio',
-    description: 'Creative agency site with immersive animations',
+    title: 'Nova AI',
+    description: 'Zeno is a smart AI-powered chatbot designed to deliver fast, accurate, and human-like conversations. It assists users by answering queries, providing support, and enhancing engagement through intelligent, real-time interactions.',
     category: 'Website',
-    image: '/project_03.jpg',
-    tags: ['GSAP', 'Three.js', 'WebGL'],
-    link: '#',
+    image: '/zeno.png',
+    tags: ['Next.js', 'Typescript', 'Mongodb', 'Tailwind', 'Shadcn', 'Framer Motion', 'Groq API', 'Google OAuth'],
+    link: 'https://zeno-npky.vercel.app',
   },
 ];
 
