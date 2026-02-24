@@ -92,7 +92,7 @@ export function About() {
                 </p>
                 
                 <p>
-                  With over 5 years of experience building web applications, I've honed my skills 
+                  With over 3 years of experience building web applications, I've honed my skills 
                   in React, TypeScript, Next.js along with Backend technologies and modern web architecture. I believe great software 
                   should feel invisible—getting out of the way so users can accomplish their goals.
                 </p>
