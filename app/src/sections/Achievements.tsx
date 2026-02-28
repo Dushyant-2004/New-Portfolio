@@ -19,7 +19,7 @@ const achievements: Achievements[] = [
   },
      
     {
-    quote: "Got 3rd Position in CodeSangam 2023, a prestigious hackathon for innovative solutions. It was an intense battle for problem-solving and innovating new ideas. Grateful for the recognition!",
+    quote: "Got 3rd Position in CodeSangam 2023, a thrilling experience where we showcased our coding skills and creativity. Grateful for the recognition and the opportunity to compete with talented minds!",
     name: "SGT University, Gurugram",
     role: "Hackathon Winner 2024",
     avatar: "/CodeSangam.png",
