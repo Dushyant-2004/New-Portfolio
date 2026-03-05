@@ -1,244 +1,331 @@
 import { useEffect, useRef, useState } from 'react';
 import gsap from 'gsap';
 
+interface Vector2D {
+  x: number;
+  y: number;
+}
+
+class Particle {
+  pos: Vector2D = { x: 0, y: 0 };
+  vel: Vector2D = { x: 0, y: 0 };
+  acc: Vector2D = { x: 0, y: 0 };
+  target: Vector2D = { x: 0, y: 0 };
+
+  closeEnoughTarget = 100;
+  maxSpeed = 1.0;
+  maxForce = 0.1;
+  particleSize = 10;
+  isKilled = false;
+
+  startColor = { r: 0, g: 0, b: 0 };
+  targetColor = { r: 0, g: 0, b: 0 };
+  colorWeight = 0;
+  colorBlendRate = 0.01;
+
+  move() {
+    let proximityMult = 1;
+    const distance = Math.sqrt(
+      Math.pow(this.pos.x - this.target.x, 2) + Math.pow(this.pos.y - this.target.y, 2)
+    );
+
+    if (distance < this.closeEnoughTarget) {
+      proximityMult = distance / this.closeEnoughTarget;
+    }
+
+    const towardsTarget = {
+      x: this.target.x - this.pos.x,
+      y: this.target.y - this.pos.y,
+    };
+
+    const magnitude = Math.sqrt(towardsTarget.x * towardsTarget.x + towardsTarget.y * towardsTarget.y);
+    if (magnitude > 0) {
+      towardsTarget.x = (towardsTarget.x / magnitude) * this.maxSpeed * proximityMult;
+      towardsTarget.y = (towardsTarget.y / magnitude) * this.maxSpeed * proximityMult;
+    }
+
+    const steer = {
+      x: towardsTarget.x - this.vel.x,
+      y: towardsTarget.y - this.vel.y,
+    };
+
+    const steerMagnitude = Math.sqrt(steer.x * steer.x + steer.y * steer.y);
+    if (steerMagnitude > 0) {
+      steer.x = (steer.x / steerMagnitude) * this.maxForce;
+      steer.y = (steer.y / steerMagnitude) * this.maxForce;
+    }
+
+    this.acc.x += steer.x;
+    this.acc.y += steer.y;
+
+    this.vel.x += this.acc.x;
+    this.vel.y += this.acc.y;
+    this.pos.x += this.vel.x;
+    this.pos.y += this.vel.y;
+    this.acc.x = 0;
+    this.acc.y = 0;
+  }
+
+  draw(ctx: CanvasRenderingContext2D, drawAsPoints: boolean) {
+    if (this.colorWeight < 1.0) {
+      this.colorWeight = Math.min(this.colorWeight + this.colorBlendRate, 1.0);
+    }
+
+    const currentColor = {
+      r: Math.round(this.startColor.r + (this.targetColor.r - this.startColor.r) * this.colorWeight),
+      g: Math.round(this.startColor.g + (this.targetColor.g - this.startColor.g) * this.colorWeight),
+      b: Math.round(this.startColor.b + (this.targetColor.b - this.startColor.b) * this.colorWeight),
+    };
+
+    if (drawAsPoints) {
+      ctx.fillStyle = `rgb(${currentColor.r}, ${currentColor.g}, ${currentColor.b})`;
+      ctx.fillRect(this.pos.x, this.pos.y, 3, 3);
+    } else {
+      ctx.fillStyle = `rgb(${currentColor.r}, ${currentColor.g}, ${currentColor.b})`;
+      ctx.beginPath();
+      ctx.arc(this.pos.x, this.pos.y, this.particleSize / 2, 0, Math.PI * 2);
+      ctx.fill();
+    }
+  }
+
+  kill(width: number, height: number) {
+    if (!this.isKilled) {
+      const randomPos = this.generateRandomPos(width / 2, height / 2, (width + height) / 2);
+      this.target.x = randomPos.x;
+      this.target.y = randomPos.y;
+
+      this.startColor = {
+        r: this.startColor.r + (this.targetColor.r - this.startColor.r) * this.colorWeight,
+        g: this.startColor.g + (this.targetColor.g - this.startColor.g) * this.colorWeight,
+        b: this.startColor.b + (this.targetColor.b - this.startColor.b) * this.colorWeight,
+      };
+      this.targetColor = { r: 0, g: 0, b: 0 };
+      this.colorWeight = 0;
+
+      this.isKilled = true;
+    }
+  }
+
+  private generateRandomPos(x: number, y: number, mag: number): Vector2D {
+    const randomX = Math.random() * (x * 2);
+    const randomY = Math.random() * (y * 2);
+
+    const direction = { x: randomX - x, y: randomY - y };
+    const magnitude = Math.sqrt(direction.x * direction.x + direction.y * direction.y);
+    if (magnitude > 0) {
+      direction.x = (direction.x / magnitude) * mag;
+      direction.y = (direction.y / magnitude) * mag;
+    }
+
+    return { x: x + direction.x, y: y + direction.y };
+  }
+}
+
 interface PreloaderProps {
   onComplete: () => void;
 }
 
+const PRELOADER_WORDS = ['DUSHYANT', 'VASISHT', 'PORTFOLIO'];
+
 export const Preloader = ({ onComplete }: PreloaderProps) => {
   const containerRef = useRef<HTMLDivElement>(null);
-  const starsRef = useRef<HTMLDivElement>(null);
-  const nameRef = useRef<HTMLDivElement>(null);
-  const subtitleRef = useRef<HTMLDivElement>(null);
-  const [stars, setStars] = useState<{ id: number; x: number; y: number; size: number; opacity: number; speed: number }[]>([]);
+  const canvasRef = useRef<HTMLCanvasElement>(null);
+  const animationRef = useRef<number | undefined>(undefined);
+  const particlesRef = useRef<Particle[]>([]);
+  const frameCountRef = useRef(0);
+  const wordIndexRef = useRef(0);
+  const [exiting, setExiting] = useState(false);
 
-  // Generate stars on mount
+  const pixelSteps = 4;
+  const drawAsPoints = true;
+
+  const generateRandomPos = (x: number, y: number, mag: number, canvasW: number, canvasH: number): Vector2D => {
+    const randomX = Math.random() * canvasW;
+    const randomY = Math.random() * canvasH;
+    const direction = { x: randomX - x, y: randomY - y };
+    const magnitude = Math.sqrt(direction.x * direction.x + direction.y * direction.y);
+    if (magnitude > 0) {
+      direction.x = (direction.x / magnitude) * mag;
+      direction.y = (direction.y / magnitude) * mag;
+    }
+    return { x: x + direction.x, y: y + direction.y };
+  };
+
+  const nextWord = (word: string, canvas: HTMLCanvasElement) => {
+    const offscreenCanvas = document.createElement('canvas');
+    offscreenCanvas.width = canvas.width;
+    offscreenCanvas.height = canvas.height;
+    const offscreenCtx = offscreenCanvas.getContext('2d')!;
+
+    offscreenCtx.fillStyle = 'white';
+    const fontSize = Math.min(canvas.width * 0.12, canvas.height * 0.25);
+    offscreenCtx.font = `bold ${fontSize}px Arial`;
+    offscreenCtx.textAlign = 'center';
+    offscreenCtx.textBaseline = 'middle';
+    offscreenCtx.fillText(word, canvas.width / 2, canvas.height / 2);
+
+    const imageData = offscreenCtx.getImageData(0, 0, canvas.width, canvas.height);
+    const pixels = imageData.data;
+
+    const newColor = {
+      r: Math.random() * 255,
+      g: Math.random() * 255,
+      b: Math.random() * 255,
+    };
+
+    const particles = particlesRef.current;
+    let particleIndex = 0;
+
+    const coordsIndexes: number[] = [];
+    for (let i = 0; i < pixels.length; i += pixelSteps * 4) {
+      coordsIndexes.push(i);
+    }
+
+    for (let i = coordsIndexes.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [coordsIndexes[i], coordsIndexes[j]] = [coordsIndexes[j], coordsIndexes[i]];
+    }
+
+    for (const coordIndex of coordsIndexes) {
+      const pixelIndex = coordIndex;
+      const alpha = pixels[pixelIndex + 3];
+
+      if (alpha > 0) {
+        const x = (pixelIndex / 4) % canvas.width;
+        const y = Math.floor(pixelIndex / 4 / canvas.width);
+
+        let particle: Particle;
+
+        if (particleIndex < particles.length) {
+          particle = particles[particleIndex];
+          particle.isKilled = false;
+          particleIndex++;
+        } else {
+          particle = new Particle();
+          const randomPos = generateRandomPos(canvas.width / 2, canvas.height / 2, (canvas.width + canvas.height) / 2, canvas.width, canvas.height);
+          particle.pos.x = randomPos.x;
+          particle.pos.y = randomPos.y;
+          particle.maxSpeed = Math.random() * 6 + 4;
+          particle.maxForce = particle.maxSpeed * 0.05;
+          particle.particleSize = Math.random() * 6 + 6;
+          particle.colorBlendRate = Math.random() * 0.0275 + 0.0025;
+          particles.push(particle);
+        }
+
+        particle.startColor = {
+          r: particle.startColor.r + (particle.targetColor.r - particle.startColor.r) * particle.colorWeight,
+          g: particle.startColor.g + (particle.targetColor.g - particle.startColor.g) * particle.colorWeight,
+          b: particle.startColor.b + (particle.targetColor.b - particle.startColor.b) * particle.colorWeight,
+        };
+        particle.targetColor = newColor;
+        particle.colorWeight = 0;
+
+        particle.target.x = x;
+        particle.target.y = y;
+      }
+    }
+
+    for (let i = particleIndex; i < particles.length; i++) {
+      particles[i].kill(canvas.width, canvas.height);
+    }
+  };
+
+  const animate = () => {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+
+    const ctx = canvas.getContext('2d')!;
+    const particles = particlesRef.current;
+
+    ctx.fillStyle = 'rgba(0, 0, 0, 0.1)';
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+    for (let i = particles.length - 1; i >= 0; i--) {
+      const particle = particles[i];
+      particle.move();
+      particle.draw(ctx, drawAsPoints);
+
+      if (particle.isKilled) {
+        if (
+          particle.pos.x < 0 ||
+          particle.pos.x > canvas.width ||
+          particle.pos.y < 0 ||
+          particle.pos.y > canvas.height
+        ) {
+          particles.splice(i, 1);
+        }
+      }
+    }
+
+    // Auto-advance words every 420 frames (~7s at 60fps) for text to fully settle
+    frameCountRef.current++;
+    if (frameCountRef.current % 420 === 0) {
+      const nextIndex = wordIndexRef.current + 1;
+
+      if (nextIndex >= PRELOADER_WORDS.length) {
+        // All words shown — trigger exit
+        setExiting(true);
+        return;
+      }
+
+      wordIndexRef.current = nextIndex;
+      nextWord(PRELOADER_WORDS[nextIndex], canvas);
+    }
+
+    animationRef.current = requestAnimationFrame(animate);
+  };
+
+  // Canvas + particle animation
   useEffect(() => {
-    const generatedStars = Array.from({ length: 150 }, (_, i) => ({
-      id: i,
-      x: Math.random() * 100,
-      y: Math.random() * 100,
-      size: Math.random() * 3 + 1,
-      opacity: Math.random() * 0.8 + 0.2,
-      speed: Math.random() * 2 + 0.5,
-    }));
-    setStars(generatedStars);
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+
+    const resize = () => {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+      // Re-render current word after resize
+      particlesRef.current = [];
+      nextWord(PRELOADER_WORDS[wordIndexRef.current], canvas);
+    };
+
+    resize();
+    animate();
+
+    window.addEventListener('resize', resize);
+
+    return () => {
+      window.removeEventListener('resize', resize);
+      if (animationRef.current) {
+        cancelAnimationFrame(animationRef.current);
+      }
+    };
   }, []);
 
+  // Exit animation via GSAP
   useEffect(() => {
-    if (!containerRef.current || !nameRef.current || !subtitleRef.current || stars.length === 0) return;
+    if (!exiting || !containerRef.current) return;
 
-    const ctx = gsap.context(() => {
-      const tl = gsap.timeline({
-        onComplete: () => {
-          // Exit animation
-          gsap.to(containerRef.current, {
-            yPercent: -100,
-            duration: 1,
-            ease: 'power4.inOut',
-            onComplete: onComplete,
-          });
-        },
-      });
-
-      // Animate stars moving
-      gsap.to('.star', {
-        y: '-=100',
-        duration: 3,
-        ease: 'none',
-        repeat: -1,
-        stagger: {
-          each: 0.02,
-          from: 'random',
-        },
-      });
-
-      // Star twinkle effect
-      gsap.to('.star', {
-        opacity: 0.2,
-        duration: 1,
-        ease: 'power1.inOut',
-        yoyo: true,
-        repeat: -1,
-        stagger: {
-          each: 0.1,
-          from: 'random',
-        },
-      });
-
-      // Name letters animation
-      const nameLetters = nameRef.current ? Array.from(nameRef.current.querySelectorAll('.letter')) : [];
-      const subtitleLetters = subtitleRef.current ? Array.from(subtitleRef.current.querySelectorAll('.letter')) : [];
-
-      if (nameLetters.length === 0 || subtitleLetters.length === 0) return;
-
-      // Initial state
-      gsap.set(nameLetters, {
-        y: 100,
-        opacity: 0,
-        rotateX: -90,
-      });
-      gsap.set(subtitleLetters, {
-        y: 50,
-        opacity: 0,
-      });
-      gsap.set('.loader-line', {
-        scaleX: 0,
-      });
-
-      // Animation sequence
-      tl.to(nameLetters, {
-        y: 0,
-        opacity: 1,
-        rotateX: 0,
-        duration: 1,
-        ease: 'power4.out',
-        stagger: 0.05,
-      })
-        .to(
-          subtitleLetters,
-          {
-            y: 0,
-            opacity: 1,
-            duration: 0.8,
-            ease: 'power3.out',
-            stagger: 0.02,
-          },
-          '-=0.5'
-        )
-        .to(
-          '.loader-line',
-          {
-            scaleX: 1,
-            duration: 1.5,
-            ease: 'power2.inOut',
-          },
-          '-=0.3'
-        )
-        .to(
-          '.glow-effect',
-          {
-            opacity: 1,
-            scale: 1.2,
-            duration: 0.8,
-            ease: 'power2.out',
-          },
-          '-=1'
-        )
-        .to({}, { duration: 0.5 }); // Small pause before exit
-    }, containerRef);
-
-    return () => ctx.revert();
-  }, [stars, onComplete]);
-
-  const splitText = (text: string) => {
-    return text.split('').map((char, index) => (
-      <span
-        key={index}
-        className="letter inline-block"
-        style={{ display: char === ' ' ? 'inline' : 'inline-block' }}
-      >
-        {char === ' ' ? '\u00A0' : char}
-      </span>
-    ));
-  };
+    gsap.to(containerRef.current, {
+      yPercent: -100,
+      duration: 1,
+      ease: 'power4.inOut',
+      onComplete: onComplete,
+    });
+  }, [exiting, onComplete]);
 
   return (
     <div
       ref={containerRef}
       className="fixed inset-0 z-[9999] flex items-center justify-center overflow-hidden bg-black"
     >
-      {/* Stars background */}
-      <div ref={starsRef} className="absolute inset-0 overflow-hidden">
-        {stars.map((star) => (
-          <div
-            key={star.id}
-            className="star absolute rounded-full bg-white"
-            style={{
-              left: `${star.x}%`,
-              top: `${star.y}%`,
-              width: `${star.size}px`,
-              height: `${star.size}px`,
-              opacity: star.opacity,
-              boxShadow: `0 0 ${star.size * 2}px ${star.size}px rgba(255, 255, 255, 0.3)`,
-            }}
-          />
-        ))}
-      </div>
-
-      {/* Shooting stars */}
-      <div className="absolute inset-0 overflow-hidden">
-        {[...Array(5)].map((_, i) => (
-          <div
-            key={i}
-            className="shooting-star absolute h-[2px] w-[100px] bg-gradient-to-r from-transparent via-white to-transparent"
-            style={{
-              top: `${Math.random() * 50}%`,
-              left: `${Math.random() * 100}%`,
-              transform: 'rotate(-45deg)',
-              animation: `shooting ${2 + Math.random() * 3}s linear ${i * 0.5}s infinite`,
-            }}
-          />
-        ))}
-      </div>
-
-      {/* Glow effect behind text */}
-      <div 
-        className="glow-effect absolute h-[300px] w-[600px] rounded-full opacity-0 blur-3xl" 
-        style={{
-          background: 'radial-gradient(circle, rgba(59, 130, 246, 0.2) 0%, rgba(168, 85, 247, 0.1) 50%, transparent 70%)'
-        }}
+      <canvas
+        ref={canvasRef}
+        className="absolute inset-0 w-full h-full"
       />
-
-      {/* Content */}
-      <div className="relative z-10 text-center">
-        {/* Main name */}
-        <div
-          ref={nameRef}
-          className="mb-4 overflow-hidden text-5xl tracking-wider text-white md:text-7xl lg:text-8xl"
-          style={{ perspective: '1000px', fontFamily: "'Bebas Neue', sans-serif", fontWeight: 400, letterSpacing: '0.08em' }}
-        >
-          {splitText('Dushyant Vasisht')}
-        </div>
-
-        {/* Subtitle */}
-        <div
-          ref={subtitleRef}
-          className="mb-8 overflow-hidden text-xl tracking-[0.3em] text-gray-400 md:text-2xl"
-          style={{ fontFamily: "'Bebas Neue', sans-serif", letterSpacing: '0.4em' }}
-        >
-          {splitText('PORTFOLIO')}
-        </div>
-
-        {/* Loading line */}
-        <div className="mx-auto h-[2px] w-[200px] overflow-hidden bg-gray-800 md:w-[300px]">
-          <div
-            className="loader-line h-full w-full origin-left bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500"
-            style={{ transformOrigin: 'left center' }}
-          />
-        </div>
-      </div>
 
       {/* Corner decorations */}
       <div className="absolute left-8 top-8 h-20 w-20 border-l-2 border-t-2 border-white/10" />
       <div className="absolute bottom-8 right-8 h-20 w-20 border-b-2 border-r-2 border-white/10" />
-
-      {/* CSS for shooting stars animation */}
-      <style>{`
-        @keyframes shooting {
-          0% {
-            transform: translateX(0) translateY(0) rotate(-45deg);
-            opacity: 1;
-          }
-          70% {
-            opacity: 1;
-          }
-          100% {
-            transform: translateX(-500px) translateY(500px) rotate(-45deg);
-            opacity: 0;
-          }
-        }
-      `}</style>
     </div>
   );
 };
