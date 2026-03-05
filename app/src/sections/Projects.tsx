@@ -15,12 +15,12 @@ interface Project {
 const projects: Project[] = [
   {
     id: 1,
-    title: 'Meridian Dashboard',
-    description: 'Analytics UI kit with real-time data visualization',
+    title: 'SysDesign',
+    description: 'SysDesign is an AI-driven platform that transforms system design prompts into complete, scalable architectures with microservices, APIs, databases, and interactive visual diagrams, built for deep learning and interview mastery',
     category: 'Dashboard',
-    image: '/project_01.jpg',
+    image: '/Sysdesign.png',
     tags: ['React', 'D3.js', 'TypeScript'],
-    link: '#',
+    link: 'https://system-design-three-pink.vercel.app',
   },
   {
     id: 2,
