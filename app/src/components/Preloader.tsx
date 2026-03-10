@@ -1,331 +1,408 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef } from 'react';
 import gsap from 'gsap';
-
-interface Vector2D {
-  x: number;
-  y: number;
-}
-
-class Particle {
-  pos: Vector2D = { x: 0, y: 0 };
-  vel: Vector2D = { x: 0, y: 0 };
-  acc: Vector2D = { x: 0, y: 0 };
-  target: Vector2D = { x: 0, y: 0 };
-
-  closeEnoughTarget = 100;
-  maxSpeed = 1.0;
-  maxForce = 0.1;
-  particleSize = 10;
-  isKilled = false;
-
-  startColor = { r: 0, g: 0, b: 0 };
-  targetColor = { r: 0, g: 0, b: 0 };
-  colorWeight = 0;
-  colorBlendRate = 0.01;
-
-  move() {
-    let proximityMult = 1;
-    const distance = Math.sqrt(
-      Math.pow(this.pos.x - this.target.x, 2) + Math.pow(this.pos.y - this.target.y, 2)
-    );
-
-    if (distance < this.closeEnoughTarget) {
-      proximityMult = distance / this.closeEnoughTarget;
-    }
-
-    const towardsTarget = {
-      x: this.target.x - this.pos.x,
-      y: this.target.y - this.pos.y,
-    };
-
-    const magnitude = Math.sqrt(towardsTarget.x * towardsTarget.x + towardsTarget.y * towardsTarget.y);
-    if (magnitude > 0) {
-      towardsTarget.x = (towardsTarget.x / magnitude) * this.maxSpeed * proximityMult;
-      towardsTarget.y = (towardsTarget.y / magnitude) * this.maxSpeed * proximityMult;
-    }
-
-    const steer = {
-      x: towardsTarget.x - this.vel.x,
-      y: towardsTarget.y - this.vel.y,
-    };
-
-    const steerMagnitude = Math.sqrt(steer.x * steer.x + steer.y * steer.y);
-    if (steerMagnitude > 0) {
-      steer.x = (steer.x / steerMagnitude) * this.maxForce;
-      steer.y = (steer.y / steerMagnitude) * this.maxForce;
-    }
-
-    this.acc.x += steer.x;
-    this.acc.y += steer.y;
-
-    this.vel.x += this.acc.x;
-    this.vel.y += this.acc.y;
-    this.pos.x += this.vel.x;
-    this.pos.y += this.vel.y;
-    this.acc.x = 0;
-    this.acc.y = 0;
-  }
-
-  draw(ctx: CanvasRenderingContext2D, drawAsPoints: boolean) {
-    if (this.colorWeight < 1.0) {
-      this.colorWeight = Math.min(this.colorWeight + this.colorBlendRate, 1.0);
-    }
-
-    const currentColor = {
-      r: Math.round(this.startColor.r + (this.targetColor.r - this.startColor.r) * this.colorWeight),
-      g: Math.round(this.startColor.g + (this.targetColor.g - this.startColor.g) * this.colorWeight),
-      b: Math.round(this.startColor.b + (this.targetColor.b - this.startColor.b) * this.colorWeight),
-    };
-
-    if (drawAsPoints) {
-      ctx.fillStyle = `rgb(${currentColor.r}, ${currentColor.g}, ${currentColor.b})`;
-      ctx.fillRect(this.pos.x, this.pos.y, 3, 3);
-    } else {
-      ctx.fillStyle = `rgb(${currentColor.r}, ${currentColor.g}, ${currentColor.b})`;
-      ctx.beginPath();
-      ctx.arc(this.pos.x, this.pos.y, this.particleSize / 2, 0, Math.PI * 2);
-      ctx.fill();
-    }
-  }
-
-  kill(width: number, height: number) {
-    if (!this.isKilled) {
-      const randomPos = this.generateRandomPos(width / 2, height / 2, (width + height) / 2);
-      this.target.x = randomPos.x;
-      this.target.y = randomPos.y;
-
-      this.startColor = {
-        r: this.startColor.r + (this.targetColor.r - this.startColor.r) * this.colorWeight,
-        g: this.startColor.g + (this.targetColor.g - this.startColor.g) * this.colorWeight,
-        b: this.startColor.b + (this.targetColor.b - this.startColor.b) * this.colorWeight,
-      };
-      this.targetColor = { r: 0, g: 0, b: 0 };
-      this.colorWeight = 0;
-
-      this.isKilled = true;
-    }
-  }
-
-  private generateRandomPos(x: number, y: number, mag: number): Vector2D {
-    const randomX = Math.random() * (x * 2);
-    const randomY = Math.random() * (y * 2);
-
-    const direction = { x: randomX - x, y: randomY - y };
-    const magnitude = Math.sqrt(direction.x * direction.x + direction.y * direction.y);
-    if (magnitude > 0) {
-      direction.x = (direction.x / magnitude) * mag;
-      direction.y = (direction.y / magnitude) * mag;
-    }
-
-    return { x: x + direction.x, y: y + direction.y };
-  }
-}
 
 interface PreloaderProps {
   onComplete: () => void;
 }
 
-const PRELOADER_WORDS = ['DUSHYANT', 'VASISHT', 'PORTFOLIO'];
+const FIRST_NAME = 'DUSHYANT';
+const LAST_NAME = 'VASISHT';
 
 export const Preloader = ({ onComplete }: PreloaderProps) => {
   const containerRef = useRef<HTMLDivElement>(null);
+  const counterRef = useRef<HTMLSpanElement>(null);
+  const progressRef = useRef<HTMLDivElement>(null);
+  const firstNameRefs = useRef<(HTMLSpanElement | null)[]>([]);
+  const lastNameRefs = useRef<(HTMLSpanElement | null)[]>([]);
+  const roleRef = useRef<HTMLDivElement>(null);
+  const curtainTopRef = useRef<HTMLDivElement>(null);
+  const curtainBottomRef = useRef<HTMLDivElement>(null);
+  const glowRef = useRef<HTMLDivElement>(null);
+  const lineLeftRef = useRef<HTMLDivElement>(null);
+  const lineRightRef = useRef<HTMLDivElement>(null);
+  const cornerTLRef = useRef<HTMLDivElement>(null);
+  const cornerBRRef = useRef<HTMLDivElement>(null);
+  const yearRef = useRef<HTMLDivElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
-  const animationRef = useRef<number | undefined>(undefined);
-  const particlesRef = useRef<Particle[]>([]);
-  const frameCountRef = useRef(0);
-  const wordIndexRef = useRef(0);
-  const [exiting, setExiting] = useState(false);
+  const animFrameRef = useRef<number>(0);
 
-  const pixelSteps = 4;
-  const drawAsPoints = true;
-
-  const generateRandomPos = (x: number, y: number, mag: number, canvasW: number, canvasH: number): Vector2D => {
-    const randomX = Math.random() * canvasW;
-    const randomY = Math.random() * canvasH;
-    const direction = { x: randomX - x, y: randomY - y };
-    const magnitude = Math.sqrt(direction.x * direction.x + direction.y * direction.y);
-    if (magnitude > 0) {
-      direction.x = (direction.x / magnitude) * mag;
-      direction.y = (direction.y / magnitude) * mag;
-    }
-    return { x: x + direction.x, y: y + direction.y };
-  };
-
-  const nextWord = (word: string, canvas: HTMLCanvasElement) => {
-    const offscreenCanvas = document.createElement('canvas');
-    offscreenCanvas.width = canvas.width;
-    offscreenCanvas.height = canvas.height;
-    const offscreenCtx = offscreenCanvas.getContext('2d')!;
-
-    offscreenCtx.fillStyle = 'white';
-    const fontSize = Math.min(canvas.width * 0.12, canvas.height * 0.25);
-    offscreenCtx.font = `bold ${fontSize}px Arial`;
-    offscreenCtx.textAlign = 'center';
-    offscreenCtx.textBaseline = 'middle';
-    offscreenCtx.fillText(word, canvas.width / 2, canvas.height / 2);
-
-    const imageData = offscreenCtx.getImageData(0, 0, canvas.width, canvas.height);
-    const pixels = imageData.data;
-
-    const newColor = {
-      r: Math.random() * 255,
-      g: Math.random() * 255,
-      b: Math.random() * 255,
-    };
-
-    const particles = particlesRef.current;
-    let particleIndex = 0;
-
-    const coordsIndexes: number[] = [];
-    for (let i = 0; i < pixels.length; i += pixelSteps * 4) {
-      coordsIndexes.push(i);
-    }
-
-    for (let i = coordsIndexes.length - 1; i > 0; i--) {
-      const j = Math.floor(Math.random() * (i + 1));
-      [coordsIndexes[i], coordsIndexes[j]] = [coordsIndexes[j], coordsIndexes[i]];
-    }
-
-    for (const coordIndex of coordsIndexes) {
-      const pixelIndex = coordIndex;
-      const alpha = pixels[pixelIndex + 3];
-
-      if (alpha > 0) {
-        const x = (pixelIndex / 4) % canvas.width;
-        const y = Math.floor(pixelIndex / 4 / canvas.width);
-
-        let particle: Particle;
-
-        if (particleIndex < particles.length) {
-          particle = particles[particleIndex];
-          particle.isKilled = false;
-          particleIndex++;
-        } else {
-          particle = new Particle();
-          const randomPos = generateRandomPos(canvas.width / 2, canvas.height / 2, (canvas.width + canvas.height) / 2, canvas.width, canvas.height);
-          particle.pos.x = randomPos.x;
-          particle.pos.y = randomPos.y;
-          particle.maxSpeed = Math.random() * 6 + 4;
-          particle.maxForce = particle.maxSpeed * 0.05;
-          particle.particleSize = Math.random() * 6 + 6;
-          particle.colorBlendRate = Math.random() * 0.0275 + 0.0025;
-          particles.push(particle);
-        }
-
-        particle.startColor = {
-          r: particle.startColor.r + (particle.targetColor.r - particle.startColor.r) * particle.colorWeight,
-          g: particle.startColor.g + (particle.targetColor.g - particle.startColor.g) * particle.colorWeight,
-          b: particle.startColor.b + (particle.targetColor.b - particle.startColor.b) * particle.colorWeight,
-        };
-        particle.targetColor = newColor;
-        particle.colorWeight = 0;
-
-        particle.target.x = x;
-        particle.target.y = y;
-      }
-    }
-
-    for (let i = particleIndex; i < particles.length; i++) {
-      particles[i].kill(canvas.width, canvas.height);
-    }
-  };
-
-  const animate = () => {
+  // Floating particles on canvas
+  useEffect(() => {
     const canvas = canvasRef.current;
     if (!canvas) return;
 
     const ctx = canvas.getContext('2d')!;
-    const particles = particlesRef.current;
+    let w = (canvas.width = window.innerWidth);
+    let h = (canvas.height = window.innerHeight);
 
-    ctx.fillStyle = 'rgba(0, 0, 0, 0.1)';
-    ctx.fillRect(0, 0, canvas.width, canvas.height);
+    const particles: { x: number; y: number; vx: number; vy: number; size: number; alpha: number }[] = [];
+    const count = Math.floor((w * h) / 12000);
 
-    for (let i = particles.length - 1; i >= 0; i--) {
-      const particle = particles[i];
-      particle.move();
-      particle.draw(ctx, drawAsPoints);
-
-      if (particle.isKilled) {
-        if (
-          particle.pos.x < 0 ||
-          particle.pos.x > canvas.width ||
-          particle.pos.y < 0 ||
-          particle.pos.y > canvas.height
-        ) {
-          particles.splice(i, 1);
-        }
-      }
+    for (let i = 0; i < count; i++) {
+      particles.push({
+        x: Math.random() * w,
+        y: Math.random() * h,
+        vx: (Math.random() - 0.5) * 0.4,
+        vy: (Math.random() - 0.5) * 0.4,
+        size: Math.random() * 1.5 + 0.5,
+        alpha: Math.random() * 0.3 + 0.05,
+      });
     }
 
-    // Auto-advance words every 420 frames (~7s at 60fps) for text to fully settle
-    frameCountRef.current++;
-    if (frameCountRef.current % 420 === 0) {
-      const nextIndex = wordIndexRef.current + 1;
-
-      if (nextIndex >= PRELOADER_WORDS.length) {
-        // All words shown — trigger exit
-        setExiting(true);
-        return;
+    const draw = () => {
+      ctx.clearRect(0, 0, w, h);
+      for (const p of particles) {
+        p.x += p.vx;
+        p.y += p.vy;
+        if (p.x < 0) p.x = w;
+        if (p.x > w) p.x = 0;
+        if (p.y < 0) p.y = h;
+        if (p.y > h) p.y = 0;
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+        ctx.fillStyle = `rgba(79, 109, 255, ${p.alpha})`;
+        ctx.fill();
       }
-
-      wordIndexRef.current = nextIndex;
-      nextWord(PRELOADER_WORDS[nextIndex], canvas);
-    }
-
-    animationRef.current = requestAnimationFrame(animate);
-  };
-
-  // Canvas + particle animation
-  useEffect(() => {
-    const canvas = canvasRef.current;
-    if (!canvas) return;
-
-    const resize = () => {
-      canvas.width = window.innerWidth;
-      canvas.height = window.innerHeight;
-      // Re-render current word after resize
-      particlesRef.current = [];
-      nextWord(PRELOADER_WORDS[wordIndexRef.current], canvas);
+      animFrameRef.current = requestAnimationFrame(draw);
     };
 
-    resize();
-    animate();
+    draw();
 
-    window.addEventListener('resize', resize);
+    const onResize = () => {
+      w = canvas.width = window.innerWidth;
+      h = canvas.height = window.innerHeight;
+    };
+    window.addEventListener('resize', onResize);
 
     return () => {
-      window.removeEventListener('resize', resize);
-      if (animationRef.current) {
-        cancelAnimationFrame(animationRef.current);
-      }
+      cancelAnimationFrame(animFrameRef.current);
+      window.removeEventListener('resize', onResize);
     };
   }, []);
 
-  // Exit animation via GSAP
+  // Main GSAP timeline
   useEffect(() => {
-    if (!exiting || !containerRef.current) return;
+    const ctx = gsap.context(() => {
+      const tl = gsap.timeline({ defaults: { ease: 'power3.out' } });
 
-    gsap.to(containerRef.current, {
-      yPercent: -100,
-      duration: 1,
-      ease: 'power4.inOut',
-      onComplete: onComplete,
-    });
-  }, [exiting, onComplete]);
+      // 1. Counter 0 → 100 + progress bar fills
+      const counter = { val: 0 };
+      tl.to(
+        counter,
+        {
+          val: 100,
+          duration: 3,
+          ease: 'power2.inOut',
+          onUpdate: () => {
+            if (counterRef.current) {
+              counterRef.current.textContent = Math.floor(counter.val)
+                .toString()
+                .padStart(3, '0');
+            }
+            if (progressRef.current) {
+              progressRef.current.style.transform = `scaleX(${counter.val / 100})`;
+            }
+          },
+        },
+        0,
+      );
+
+      // 2. Glow orb scales in
+      tl.fromTo(
+        glowRef.current,
+        { scale: 0.3, opacity: 0 },
+        { scale: 1, opacity: 1, duration: 2, ease: 'power2.out' },
+        0.1,
+      );
+
+      // 3. Corner brackets fade in
+      tl.fromTo(
+        [cornerTLRef.current, cornerBRRef.current],
+        { opacity: 0, scale: 0.8 },
+        { opacity: 1, scale: 1, duration: 0.8, stagger: 0.1 },
+        0.2,
+      );
+
+      // 4. Year label
+      tl.fromTo(
+        yearRef.current,
+        { opacity: 0, x: 10 },
+        { opacity: 1, x: 0, duration: 0.6 },
+        0.4,
+      );
+
+      // 5. Horizontal decorative lines draw in
+      tl.fromTo(
+        lineLeftRef.current,
+        { scaleX: 0 },
+        { scaleX: 1, duration: 1.4, ease: 'power3.inOut' },
+        0.5,
+      );
+      tl.fromTo(
+        lineRightRef.current,
+        { scaleX: 0 },
+        { scaleX: 1, duration: 1.4, ease: 'power3.inOut' },
+        0.6,
+      );
+
+      // 6. First name — each letter slides up with bounce
+      tl.fromTo(
+        firstNameRefs.current.filter(Boolean),
+        { yPercent: 130, opacity: 0, rotateX: -90 },
+        {
+          yPercent: 0,
+          opacity: 1,
+          rotateX: 0,
+          duration: 0.7,
+          stagger: 0.04,
+          ease: 'back.out(2)',
+        },
+        0.8,
+      );
+
+      // 7. Last name — each letter slides up
+      tl.fromTo(
+        lastNameRefs.current.filter(Boolean),
+        { yPercent: 130, opacity: 0, rotateX: -90 },
+        {
+          yPercent: 0,
+          opacity: 1,
+          rotateX: 0,
+          duration: 0.7,
+          stagger: 0.04,
+          ease: 'back.out(2)',
+        },
+        1.1,
+      );
+
+      // 8. Role subtitle fades up
+      tl.fromTo(
+        roleRef.current,
+        { y: 30, opacity: 0 },
+        { y: 0, opacity: 1, duration: 0.9, ease: 'power2.out' },
+        1.6,
+      );
+
+      // 9. Brief hold, then fade out content
+      tl.to(
+        [
+          ...firstNameRefs.current.filter(Boolean),
+          ...lastNameRefs.current.filter(Boolean),
+          roleRef.current,
+          lineLeftRef.current,
+          lineRightRef.current,
+          glowRef.current,
+          counterRef.current?.parentElement,
+          cornerTLRef.current,
+          cornerBRRef.current,
+          yearRef.current,
+        ].filter(Boolean),
+        {
+          opacity: 0,
+          y: -30,
+          duration: 0.5,
+          stagger: 0.015,
+          ease: 'power2.in',
+        },
+        3.4,
+      );
+
+      // 10. Progress bar glows then fades
+      tl.to(
+        progressRef.current,
+        {
+          opacity: 0,
+          duration: 0.3,
+          ease: 'power2.in',
+        },
+        3.5,
+      );
+
+      // 11. Split-curtain exit reveals the site
+      tl.to(
+        curtainTopRef.current,
+        { yPercent: -100, duration: 1, ease: 'power4.inOut' },
+        3.8,
+      );
+      tl.to(
+        curtainBottomRef.current,
+        { yPercent: 100, duration: 1, ease: 'power4.inOut' },
+        3.8,
+      );
+
+      // 12. Canvas fades
+      tl.to(canvasRef.current, { opacity: 0, duration: 0.6 }, 3.8);
+
+      // 13. Done
+      tl.call(() => onComplete(), undefined, 4.8);
+    }, containerRef);
+
+    return () => ctx.revert();
+  }, [onComplete]);
 
   return (
-    <div
-      ref={containerRef}
-      className="fixed inset-0 z-[9999] flex items-center justify-center overflow-hidden bg-black"
-    >
-      <canvas
-        ref={canvasRef}
-        className="absolute inset-0 w-full h-full"
+    <div ref={containerRef} className="fixed inset-0 z-[9999]">
+      {/* Split curtains (background layer) */}
+      <div
+        ref={curtainTopRef}
+        className="absolute inset-x-0 top-0 h-1/2 bg-[#050508] will-change-transform"
+      />
+      <div
+        ref={curtainBottomRef}
+        className="absolute inset-x-0 bottom-0 h-1/2 bg-[#050508] will-change-transform"
       />
 
-      {/* Corner decorations */}
-      <div className="absolute left-8 top-8 h-20 w-20 border-l-2 border-t-2 border-white/10" />
-      <div className="absolute bottom-8 right-8 h-20 w-20 border-b-2 border-r-2 border-white/10" />
+      {/* Floating particles canvas */}
+      <canvas
+        ref={canvasRef}
+        className="absolute inset-0 w-full h-full z-[1] pointer-events-none"
+      />
+
+      {/* Content layer */}
+      <div className="absolute inset-0 flex flex-col items-center justify-center z-10">
+        {/* Glow orb behind text */}
+        <div
+          ref={glowRef}
+          className="absolute w-[500px] h-[500px] rounded-full opacity-0 pointer-events-none"
+          style={{
+            background:
+              'radial-gradient(circle, rgba(79,109,255,0.15) 0%, rgba(79,109,255,0.05) 40%, transparent 70%)',
+            filter: 'blur(60px)',
+          }}
+        />
+
+        {/* Counter — top right */}
+        <div className="absolute top-10 right-12 flex items-end gap-1">
+          <span
+            ref={counterRef}
+            className="text-[5rem] md:text-[7rem] leading-none font-light tracking-tight select-none"
+            style={{
+              fontFamily: "'Space Grotesk', sans-serif",
+              color: 'rgba(255,255,255,0.06)',
+            }}
+          >
+            000
+          </span>
+          <span
+            className="text-xs font-mono mb-4 tracking-widest"
+            style={{ color: 'rgba(79,109,255,0.4)' }}
+          >
+            %
+          </span>
+        </div>
+
+        {/* Year — bottom left */}
+        <div
+          ref={yearRef}
+          className="absolute bottom-10 left-12 text-xs font-mono tracking-[0.3em] opacity-0"
+          style={{ color: 'rgba(255,255,255,0.25)' }}
+        >
+         
+        </div>
+
+        {/* Corner brackets */}
+        <div
+          ref={cornerTLRef}
+          className="absolute left-8 top-8 h-16 w-16 border-l-[1.5px] border-t-[1.5px] opacity-0"
+          style={{ borderColor: 'rgba(79,109,255,0.25)' }}
+        />
+        <div
+          ref={cornerBRRef}
+          className="absolute bottom-8 right-8 h-16 w-16 border-b-[1.5px] border-r-[1.5px] opacity-0"
+          style={{ borderColor: 'rgba(79,109,255,0.25)' }}
+        />
+
+        {/* Decorative lines */}
+        <div
+          ref={lineLeftRef}
+          className="absolute left-0 top-1/2 w-[28%] h-px origin-left"
+          style={{
+            transform: 'scaleX(0)',
+            background:
+              'linear-gradient(to right, transparent, rgba(79,109,255,0.3), transparent)',
+          }}
+        />
+        <div
+          ref={lineRightRef}
+          className="absolute right-0 top-1/2 w-[28%] h-px origin-right"
+          style={{
+            transform: 'scaleX(0)',
+            background:
+              'linear-gradient(to left, transparent, rgba(79,109,255,0.3), transparent)',
+          }}
+        />
+
+        {/* Name block */}
+        <div className="flex flex-col items-center gap-1 perspective-[800px]">
+          {/* First name */}
+          <div className="overflow-hidden py-1">
+            <div className="flex">
+              {FIRST_NAME.split('').map((char, i) => (
+                <span
+                  key={i}
+                  ref={(el) => {
+                    firstNameRefs.current[i] = el;
+                  }}
+                  className="inline-block text-5xl sm:text-7xl md:text-8xl lg:text-9xl font-bold text-white tracking-tight will-change-transform"
+                  style={{
+                    fontFamily: "'Space Grotesk', sans-serif",
+                    opacity: 0,
+                    textShadow: '0 0 40px rgba(79,109,255,0.15)',
+                  }}
+                >
+                  {char}
+                </span>
+              ))}
+            </div>
+          </div>
+
+          {/* Last name */}
+          <div className="overflow-hidden py-1">
+            <div className="flex">
+              {LAST_NAME.split('').map((char, i) => (
+                <span
+                  key={i}
+                  ref={(el) => {
+                    lastNameRefs.current[i] = el;
+                  }}
+                  className="inline-block text-5xl sm:text-7xl md:text-8xl lg:text-9xl font-bold tracking-tight will-change-transform"
+                  style={{
+                    fontFamily: "'Space Grotesk', sans-serif",
+                    color: 'rgba(255,255,255,0.5)',
+                    opacity: 0,
+                  }}
+                >
+                  {char}
+                </span>
+              ))}
+            </div>
+          </div>
+
+          {/* Role subtitle */}
+          <div className="overflow-hidden mt-5">
+            <div
+              ref={roleRef}
+              className="text-xs sm:text-sm md:text-base tracking-[0.35em] uppercase font-mono opacity-0"
+              style={{ color: '#4F6DFF' }}
+            >
+              Creative Developer &amp; Designer
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Progress bar along the bottom */}
+      <div className="absolute bottom-0 left-0 right-0 h-[2px] z-20" style={{ background: 'rgba(255,255,255,0.04)' }}>
+        <div
+          ref={progressRef}
+          className="h-full origin-left"
+          style={{
+            transform: 'scaleX(0)',
+            background: 'linear-gradient(to right, #4F6DFF, #7B8FFF)',
+            boxShadow: '0 0 20px rgba(79,109,255,0.5)',
+          }}
+        />
+      </div>
     </div>
   );
 };
