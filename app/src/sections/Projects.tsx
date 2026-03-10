@@ -46,7 +46,7 @@ const projects: Project[] = [
     description: 'Code Rift is a cutting-edge platform that revolutionizes the way developers collaborate and build software. It offers a seamless integration of development tools, real-time collaboration features, and intelligent code assistance to boost productivity and innovation.',
     category: 'Website',
     image: '/CodeRift.png',
-    tags: ['Next.js', 'Typescript', 'Mongodb', 'Tailwind', 'Shadcn', 'Framer Motion', 'Groq API', 'Google OAuth'],
+    tags: ['Next.js', 'Typescript', 'Mongodb', 'Tailwind', 'Shadcn', 'Framer Motion', 'Groq API', 'Google OAuth', 'Stripe'],
     link: 'https://code-rift-phi.vercel.app',
   },
 ];
