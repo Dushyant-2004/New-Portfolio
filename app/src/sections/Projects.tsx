@@ -19,7 +19,7 @@ const projects: Project[] = [
     description: 'SysDesign is an AI-driven platform that transforms system design prompts into complete, scalable architectures with microservices, APIs, databases, and interactive visual diagrams, built for deep learning and interview mastery',
     category: 'Dashboard',
     image: '/Sysdesign.png',
-    tags: ['React', 'D3.js', 'TypeScript'],
+    tags: ['Next.js', 'MongoDB', 'TypeScript', 'Mongodb', 'Shadcn', 'Framer Motion', 'GSAP', 'Razorpay', 'Google OAuth'],
     link: 'https://system-design-three-pink.vercel.app',
   },
   {
