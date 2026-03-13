@@ -33,15 +33,6 @@ const projects: Project[] = [
   },
   {
     id: 3,
-    title: 'Zeno AI',
-    description: 'Zeno is a smart AI-powered chatbot designed to deliver fast, accurate, and human-like conversations. It assists users by answering queries, providing support, and enhancing engagement through intelligent, real-time interactions.',
-    category: 'Website',
-    image: '/zeno.png',
-    tags: ['Next.js', 'Typescript', 'Mongodb', 'Tailwind', 'Shadcn', 'Framer Motion', 'Groq API', 'Google OAuth'],
-    link: 'https://zeno-npky.vercel.app',
-  },
-  {
-    id: 4,
     title: 'Code Rift',
     description: 'Code Rift is a cutting-edge platform that revolutionizes the way developers collaborate and build software. It offers a seamless integration of development tools, real-time collaboration features, and intelligent code assistance to boost productivity and innovation.',
     category: 'Website',
