@@ -229,6 +229,7 @@
 
 
 import { useState } from 'react';
+import { Link } from 'react-router-dom';
 import { useScrollReveal } from '@/hooks/useScrollReveal';
 import { Mail, Send, Linkedin, Github, InstagramIcon } from 'lucide-react';
 import { toast } from 'sonner';
@@ -415,8 +416,8 @@ export function Contact() {
               Dushyant Vashisht. All rights reserved.
             </div>
             <div className="flex items-center gap-6 text-sm text-[#A7B1C6]">
-              <a href="#" className="hover:text-white transition-colors">Privacy</a>
-              <a href="#" className="hover:text-white transition-colors">Terms</a>
+              <Link to="/privacy" className="hover:text-white transition-colors">Privacy</Link>
+              <Link to="/terms" className="hover:text-white transition-colors">Terms</Link>
             </div>
           </div>
         </footer>

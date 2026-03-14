@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { Toaster } from 'sonner';
 import { Navigation } from '@/components/Navigation';
 import { Preloader } from '@/components/Preloader';
@@ -9,6 +10,8 @@ import { Capabilities } from '@/sections/Capabilities';
 import { Process } from '@/sections/Process';
 import { Achievements } from '@/sections/Achievements';
 import { Contact } from '@/sections/Contact';
+import { PrivacyPolicy } from '@/pages/PrivacyPolicy';
+import { Terms } from '@/pages/Terms';
 import { useCustomCursor } from '@/hooks/useCustomCursor';
 
 function App() {
@@ -46,41 +49,49 @@ function App() {
   }, []);
 
   return (
-    <>
-      {/* Preloader */}
-      {isLoading && <Preloader onComplete={handlePreloaderComplete} />}
+    <BrowserRouter>
+      <Routes>
+        <Route path="/privacy" element={<PrivacyPolicy />} />
+        <Route path="/terms" element={<Terms />} />
+        <Route path="*" element={
+          <>
+            {/* Preloader */}
+            {isLoading && <Preloader onComplete={handlePreloaderComplete} />}
 
-      <div className="relative min-h-screen bg-[#070B14]">
-        {/* Grain Overlay */}
-        <div className="grain-overlay" />
+            <div className="relative min-h-screen bg-[#070B14]">
+              {/* Grain Overlay */}
+              <div className="grain-overlay" />
 
-      {/* Toast notifications */}
-      <Toaster 
-        position="top-center"
-        toastOptions={{
-          style: {
-            background: 'rgba(11, 18, 34, 0.95)',
-            border: '1px solid rgba(79, 109, 255, 0.2)',
-            color: '#F2F5FA',
-          },
-        }}
-      />
+            {/* Toast notifications */}
+            <Toaster 
+              position="top-center"
+              toastOptions={{
+                style: {
+                  background: 'rgba(11, 18, 34, 0.95)',
+                  border: '1px solid rgba(79, 109, 255, 0.2)',
+                  color: '#F2F5FA',
+                },
+              }}
+            />
 
-      {/* Navigation - only show after preloader */}
-      {!isLoading && <Navigation />}
+            {/* Navigation - only show after preloader */}
+            {!isLoading && <Navigation />}
 
-      {/* Main Content */}
-      <main className="relative">
-        <Hero />
-        <About />
-        <Projects />
-        <Capabilities />
-        <Process />
-        <Achievements />
-        <Contact />
-      </main>
-    </div>
-    </>
+            {/* Main Content */}
+            <main className="relative">
+              <Hero />
+              <About />
+              <Projects />
+              <Capabilities />
+              <Process />
+              <Achievements />
+              <Contact />
+            </main>
+          </div>
+          </>
+        } />
+      </Routes>
+    </BrowserRouter>
   );
 }
 

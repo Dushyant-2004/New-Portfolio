@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import { ArrowDown, MapPin } from 'lucide-react';
+import { ArrowDown, MapPin, Download } from 'lucide-react';
 
 export function Hero() {
   const [isLoaded, setIsLoaded] = useState(false);
@@ -136,20 +136,33 @@ export function Hero() {
               <span className="text-sm">Based in India</span>
             </div>
 
-            <button
-              onClick={scrollToWork}
-              className="btn-primary flex items-center gap-3 group"
+            <div
+              className="flex items-center gap-3"
               style={{
                 opacity: isLoaded ? 1 : 0,
                 transform: isLoaded ? 'translateY(0) scale(1)' : 'translateY(20px) scale(0.96)',
                 transition: 'all 0.6s cubic-bezier(0.23, 1, 0.32, 1)',
                 transitionDelay: '0.85s',
               }}
-              data-cursor-hover
             >
-              <span>Explore Work</span>
-              <ArrowDown className="w-4 h-4 transition-transform duration-300 group-hover:translate-y-1" />
-            </button>
+              <a
+                href="/resume.pdf"
+                download="Dushyant_Vasisht_Resume.pdf"
+                className="inline-flex items-center gap-3 px-6 py-3 rounded-full border border-[rgba(79,109,255,0.4)] text-[#A7B1C6] hover:text-white hover:border-[rgba(79,109,255,0.8)] hover:bg-[rgba(79,109,255,0.08)] transition-all duration-300 group text-sm font-medium"
+                data-cursor-hover
+              >
+                <Download className="w-4 h-4 transition-transform duration-300 group-hover:-translate-y-0.5" />
+                <span>Download Resume</span>
+              </a>
+              <button
+                onClick={scrollToWork}
+                className="btn-primary flex items-center gap-3 group"
+                data-cursor-hover
+              >
+                <span>Explore Work</span>
+                <ArrowDown className="w-4 h-4 transition-transform duration-300 group-hover:translate-y-1" />
+              </button>
+            </div>
           </div>
         </div>
       </div>
