@@ -151,7 +151,7 @@ export function Hero() {
                 className="inline-flex items-center gap-3 px-6 py-3 rounded-full border border-[rgba(79,109,255,0.4)] text-[#A7B1C6] hover:text-white hover:border-[rgba(79,109,255,0.8)] hover:bg-[rgba(79,109,255,0.08)] transition-all duration-300 group text-sm font-medium"
                 data-cursor-hover
               >
-                <Download className="w-4 h-4 transition-transform duration-300 group-hover:-translate-y-0.5" />
+                <Download className="w-6 h-9 transition-transform duration-300 group-hover:-translate-y-0.5" />
                 <span>Download Resume</span>
               </a>
               <button
